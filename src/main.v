@@ -114,7 +114,6 @@ module main
               r_counter          <= r_counter + 1;
               r_start_bcd_engine <= 1;
               r_state            <= s_WAIT_FOR_BCD;
-              
             end
           end
 
