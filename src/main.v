@@ -93,7 +93,7 @@ module main
     wire w_dv;
     
     // This detects fully debounced high-going edges from the button
-    pos_edge_detector ped(clk, BTNU, w_button_edge);
+    pos_edge_detector u1(clk, BTNU, w_button_edge);
 
     // A FSM that converts the binary value in 'r_counter' into BCD stored in 'w_bcd'
     binary_to_bcd#(.INPUT_WIDTH(16), .DECIMAL_DIGITS(4)) u2(clk, r_counter, r_start_bcd_engine, w_bcd, w_dv);
