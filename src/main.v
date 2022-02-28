@@ -64,6 +64,8 @@ module main
         input rst_n,
         input BTNU,
         
+        output LED16_B,
+        
         // The 16 green LEDs
         output [15:0] led,
         
@@ -148,6 +150,8 @@ module main
   
     //assign led = r_counter;
     assign led = r_bcd;
+    
+    assign LED16_B = BTNU;
   
     
 endmodule
