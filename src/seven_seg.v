@@ -1,25 +1,9 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 02/27/2022 02:25:11 PM
-// Design Name: 
-// Module Name: seven_seg
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 
+//======================================================================================================================
+// clock_divider() - Divides the input clock down by 100,000
+//======================================================================================================================
 module clock_divider(input i_clk, output o_clk);
     reg [31:0] r_counter = 0;
     reg r_clk = 0;
@@ -38,9 +22,12 @@ module clock_divider(input i_clk, output o_clk);
     
     assign o_clk = r_clk;
 endmodule    
+//======================================================================================================================
     
 
-
+//======================================================================================================================
+// seven_seg() - Drives the right-most 4 7-segment displays
+//======================================================================================================================
 module seven_seg
     (
         input         i_clk,
@@ -54,6 +41,7 @@ module seven_seg
     reg [0:1] r_digit = 0;
     reg [3:0] r_bcd;
 
+    // w_slow_clk is a divided down clock.  At a 100 MHz system clock, w_slow_clock is 1000 Hz
     wire w_slow_clk;
     clock_divider u0(i_clk, w_slow_clk);
 
@@ -95,18 +83,17 @@ module seven_seg
 
     always @(r_bcd)
     begin
-        case (r_bcd) //case statement
-            0 : r_cathode = 8'b00111111;
-            1 : r_cathode = 8'b00000110;
-            2 : r_cathode = 8'b01011011;
-            3 : r_cathode = 8'b01001111;
-            4 : r_cathode = 8'b01100110;
-            5 : r_cathode = 8'b01101101;
-            6 : r_cathode = 8'b01111101;
-            7 : r_cathode = 8'b00000111;
-            8 : r_cathode = 8'b01111111;
-            9 : r_cathode = 8'b01100111;
-            //switch off 7 segment character when the bcd digit is not a decimal number.
+        case (r_bcd)
+            0       : r_cathode = 8'b00111111;
+            1       : r_cathode = 8'b00000110;
+            2       : r_cathode = 8'b01011011;
+            3       : r_cathode = 8'b01001111;
+            4       : r_cathode = 8'b01100110;
+            5       : r_cathode = 8'b01101101;
+            6       : r_cathode = 8'b01111101;
+            7       : r_cathode = 8'b00000111;
+            8       : r_cathode = 8'b01111111;
+            9       : r_cathode = 8'b01100111;
             default : r_cathode = 8'b00000000; 
         endcase
     end
@@ -115,3 +102,4 @@ module seven_seg
     assign o_anode = r_anode;
 
 endmodule
+//======================================================================================================================

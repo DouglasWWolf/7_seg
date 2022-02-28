@@ -16,7 +16,7 @@
 //======================================================================================================================
 module pos_edge_detector(input clk, input pin, output q);
     
-    parameter [31:0] DEBOUNCE_PERIOD = `SYSCLOCK_FREQ / 100;
+    parameter [31:0] DEBOUNCE_PERIOD = `SYSCLOCK_FREQ / 200;
 
     reg previous_pin_state = 0;
     reg [31:0] debounce_clock = 0;
