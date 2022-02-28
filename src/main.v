@@ -105,8 +105,8 @@ module main
     // A FSM that converts the binary value in 'r_counter' into BCD stored in 'w_bcd'
     binary_to_bcd#(.INPUT_WIDTH(16), .DECIMAL_DIGITS(4)) u2(clk, r_counter, r_start_bcd_engine, w_bcd, w_dv);
     
-    seven_seg dig0(clk, r_bcd, SEG, AN); 
-
+    // A block of 4 7-segment displays
+    seven_seg u3(clk, r_bcd, SEG, AN); 
 
     always @(posedge clk) begin
       
