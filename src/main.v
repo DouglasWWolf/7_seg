@@ -151,6 +151,7 @@ module main
     //assign led = r_counter;
     assign led = r_bcd;
     
+    // Light up the blue LED whenever our pushbutton is being pressed
     assign LED16_B = BTNU;
   
     
