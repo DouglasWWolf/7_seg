@@ -64,7 +64,14 @@ module main
         input rst_n,
         input BTNU,
         
-        output [15:0] led
+        // The 16 green LEDs
+        output [15:0] led,
+        
+        // The anodes of the rightmost four 7-segment displays 
+        output [7:0] AN,
+        
+        // THe cathods of the 7-segment dispalsy
+        output [7:0] SEG
     );
   
     // States that our FSM walks thru
@@ -97,6 +104,8 @@ module main
 
     // A FSM that converts the binary value in 'r_counter' into BCD stored in 'w_bcd'
     binary_to_bcd#(.INPUT_WIDTH(16), .DECIMAL_DIGITS(4)) u2(clk, r_counter, r_start_bcd_engine, w_bcd, w_dv);
+    
+    seven_seg dig0(clk, r_bcd, SEG, AN); 
 
 
     always @(posedge clk) begin
@@ -139,7 +148,7 @@ module main
   
     //assign led = r_counter;
     assign led = r_bcd;
-   
+  
     
 endmodule
 //======================================================================================================================
