@@ -1,10 +1,34 @@
 `timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 03/28/2022 03:37:05 PM
+// Design Name: 
+// Module Name: four_digit_display
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
 
-/*
+
+
+
+`timescale 1ns / 1ps
+
+
 //======================================================================================================================
 // clock_divider() - Divides the input clock down by 100,000
 //======================================================================================================================
-module clock_divider(input i_clk, output o_clk);
+module seven_seg_clock_divider(input i_clk, output o_clk);
     reg [31:0] r_counter = 0;
     reg r_clk = 0;
 
@@ -43,7 +67,7 @@ module seven_seg
 
     // w_slow_clk is a divided down clock.  At a 100 MHz system clock, w_slow_clock is 1000 Hz
     wire w_slow_clk;
-    clock_divider u0(i_clk, w_slow_clk);
+    seven_seg_clock_divider u0(i_clk, w_slow_clk);
 
     always @(posedge w_slow_clk) begin
     
@@ -104,4 +128,74 @@ module seven_seg
 endmodule
 //======================================================================================================================
 
-*/
+
+//======================================================================================================================
+// four_digit_display - Drives a 4-digit block of 7-segment displays
+//======================================================================================================================
+module four_digit_display
+(
+    input i_clk,
+    input  [15:0] i_value,
+    output [7:0] o_cathode,
+    output [7:0] o_anode 
+);
+
+    // States that our FSM walks thru
+    parameter s_IDLE         = 0;
+    parameter s_WAIT_FOR_BCD = 1;
+
+    // The current state of our FSM
+    reg r_state = s_IDLE;
+
+    // On any clock cycle that this is a '1', the BCD FSM starts
+    reg r_start_bcd_engine = 0;
+
+    // This will be '1' when r_bcd contains the result of the most recent conversion
+    reg r_dv;
+    
+    // When the conversion to BCD is complete, the output of the BCD module gets stored here
+    reg  [15:0] r_bcd;
+    
+    // This is the value we are currently displaying
+    reg [15:0] r_current_value = 59999;
+    
+    // A FSM that converts the binary value in 'i_value' into BCD stored in 'r_bcd'
+    binary_to_bcd#(.INPUT_WIDTH(16), .DECIMAL_DIGITS(4)) u1(i_clk, i_value, r_start_bcd_engine, r_bcd, r_dv);
+
+    // A block of four 7-segment displays
+    seven_seg u2(i_clk, r_bcd, o_cathode, o_anode); 
+
+    always @(posedge i_clk) begin
+      
+        // By default, we aren't starting the BCD engine this clock cycle
+        r_start_bcd_engine <= 0;
+    
+        // The FSM that stores our count in BCD into the r_bcd register
+        case (r_state)
+
+        // We're waiting for i_value to change           
+        s_IDLE:
+          begin 
+            if (i_value != r_current_value)  begin
+              r_current_value    <= i_value;
+              r_start_bcd_engine <= 1;
+              r_state            <= s_WAIT_FOR_BCD;
+            end
+          end
+
+        //  We're waiting for the BCD conversion to complete         
+        s_WAIT_FOR_BCD:
+          begin
+            if (r_dv) begin
+              r_state <= s_IDLE;
+            end
+          end
+                  
+        endcase
+    end
+
+
+
+endmodule
+//======================================================================================================================
+
